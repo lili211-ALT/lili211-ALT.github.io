@@ -1,0 +1,561 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1.0" />
+<meta name="description" content="吕晴的个人主页 —— 记录 Python 与前端学习笔记" />
+<title>吕晴 · 个人主页</title>
+<link rel="preconnect" href="https://fonts.googleapis.com" />
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600&family=Noto+Serif+SC:wght@500;700&display=swap" rel="stylesheet" />
+
+<style>
+/* ============================================================
+   个人主页 · 天蓝渐变 + 竖向滚动单列（单文件版）
+   想换配色，只改下面 :root 里的变量即可。
+   ============================================================ */
+:root {
+  --sky-1: #b3ddfa;
+  --sky-2: #d9f0ff;
+  --sky-3: #f4fbff;
+  --card: rgba(255, 255, 255, 0.62);
+  --card-hover: rgba(255, 255, 255, 0.85);
+  --border: rgba(18, 96, 148, 0.10);
+  --text: #0d2f47;
+  --muted: #4d6b80;
+  --accent: #1e88e5;
+  --accent-2: #52acf0;
+  --radius: 28px;
+  --font-serif: "Noto Serif SC", "Songti SC", SimSun, "Source Han Serif SC", serif;
+  --font-sans: "Inter", "PingFang SC", "Microsoft YaHei", system-ui, -apple-system, sans-serif;
+}
+
+* { box-sizing: border-box; margin: 0; padding: 0; }
+
+html { scroll-behavior: smooth; }
+
+body {
+  min-height: 100vh;
+  padding: 96px 24px 120px;
+  background:
+    radial-gradient(1100px 560px at 12% -8%, rgba(255, 255, 255, 0.9), transparent 62%),
+    radial-gradient(900px 520px at 92% 8%, rgba(110, 185, 240, 0.38), transparent 64%),
+    linear-gradient(180deg, var(--sky-1) 0%, var(--sky-2) 40%, var(--sky-3) 72%, #ffffff 100%);
+  background-attachment: fixed;
+  color: var(--text);
+  font-family: var(--font-sans);
+  line-height: 1.78;
+  overflow-x: hidden;
+}
+
+/* 顶部滚动进度条 */
+.progress { position: fixed; top: 0; left: 0; right: 0; height: 2px; z-index: 20; background: rgba(255,255,255,.35); }
+.progress__bar {
+  display: block; height: 100%; width: 100%;
+  transform-origin: left center; transform: scaleX(0);
+  background: linear-gradient(90deg, var(--accent-2), var(--accent));
+}
+
+/* 竖向排列的主容器 */
+.stack {
+  position: relative; z-index: 2;
+  width: min(760px, 100%);
+  margin: 0 auto;
+  display: flex; flex-direction: column; gap: 36px;
+}
+
+/* 卡片 */
+.card {
+  position: relative; overflow: hidden;
+  background: var(--card);
+  border: 1px solid rgba(255,255,255,.85);
+  border-radius: var(--radius);
+  padding: 40px 42px;
+  backdrop-filter: blur(14px) saturate(1.1);
+  -webkit-backdrop-filter: blur(14px) saturate(1.1);
+  box-shadow: 0 2px 6px -2px rgba(13,47,71,.06), 0 30px 60px -34px rgba(13,47,71,.35);
+  transition: transform .4s cubic-bezier(.2,.7,.3,1), background .4s ease,
+              border-color .4s ease, box-shadow .4s ease;
+}
+.card::before {
+  content: ""; position: absolute; top: 0; left: 12%; right: 12%; height: 1px;
+  background: linear-gradient(90deg, transparent, rgba(255,255,255,.95), transparent);
+  pointer-events: none;
+}
+.card:hover {
+  background: var(--card-hover);
+  border-color: rgba(30,136,229,.22);
+  transform: translateY(-3px);
+  box-shadow: 0 2px 6px -2px rgba(13,47,71,.07), 0 40px 70px -34px rgba(13,47,71,.4);
+}
+
+/* 右上角「前往」箭头（只有它能跳转） */
+.card__go {
+  position: absolute; top: 22px; right: 22px; z-index: 3;
+  width: 34px; height: 34px;
+  display: grid; place-items: center;
+  border-radius: 50%;
+  border: 1px solid var(--border);
+  background: rgba(255,255,255,.75);
+  color: var(--muted);
+  font-size: 13px;
+  text-decoration: none;
+  overflow: hidden;
+  transition: color .25s ease, background .25s ease, border-color .25s ease,
+              transform .25s ease, box-shadow .25s ease;
+}
+.card__go:hover {
+  color: #fff; background: var(--accent); border-color: var(--accent);
+  transform: translate(2px, -2px);
+  box-shadow: 0 10px 20px -10px var(--accent);
+}
+.card__go:focus-visible { outline: 2px solid var(--accent); outline-offset: 2px; }
+
+/* 头图 */
+.hero { display: flex; flex-direction: column; align-items: flex-start; gap: 14px; padding: 54px 42px 46px; }
+.hero__eyebrow {
+  font-size: 11px; letter-spacing: .26em; text-transform: uppercase;
+  color: var(--accent); font-weight: 600; margin-bottom: 4px;
+}
+.avatar {
+  width: 92px; height: 92px; border-radius: 50%;
+  display: grid; place-items: center;
+  font-size: 34px; font-weight: 700; font-family: var(--font-serif);
+  color: #fff;
+  background: linear-gradient(140deg, var(--accent-2), var(--accent));
+  box-shadow: 0 0 0 1px rgba(255,255,255,.9), 0 0 0 7px rgba(255,255,255,.45),
+              0 20px 38px -18px rgba(30,136,229,.75);
+  margin: 10px 0 14px;
+}
+.hero__name {
+  font-size: clamp(38px, 6.4vw, 60px);
+  font-family: var(--font-serif); font-weight: 700;
+  letter-spacing: 2px; line-height: 1.18;
+  background: linear-gradient(135deg, #0a3c5e 0%, #1b7fce 55%, #55b3f2 100%);
+  -webkit-background-clip: text; background-clip: text;
+  color: transparent;
+}
+.hero__role { color: var(--accent); font-weight: 600; font-size: 15px; letter-spacing: .04em; }
+.hero__tagline { color: var(--muted); max-width: 34ch; }
+.hero__actions { display: flex; gap: 12px; margin-top: 18px; flex-wrap: wrap; }
+
+/* 按钮 */
+.btn {
+  position: relative; overflow: hidden;
+  display: inline-flex; align-items: center;
+  padding: 12px 26px; border-radius: 999px;
+  font-size: 14px; font-weight: 600; letter-spacing: .02em;
+  text-decoration: none;
+  transition: transform .25s ease, box-shadow .25s ease,
+              background .25s ease, border-color .25s ease, color .25s ease;
+}
+.btn--primary {
+  background: linear-gradient(135deg, var(--accent-2), var(--accent));
+  color: #fff;
+  box-shadow: 0 16px 30px -16px rgba(30,136,229,.9);
+}
+.btn--primary:hover { transform: translateY(-2px); box-shadow: 0 22px 38px -16px rgba(30,136,229,.95); }
+.btn--ghost { border: 1px solid var(--border); background: rgba(255,255,255,.55); color: var(--text); }
+.btn--ghost:hover { border-color: var(--accent); color: var(--accent); background: #fff; }
+
+/* 卡片标题：编号 + 衬线标题 */
+.card__title {
+  font-size: 20px; font-weight: 700; margin-bottom: 20px;
+  display: flex; align-items: baseline; gap: 12px;
+  font-family: var(--font-serif); letter-spacing: 1px;
+  padding-right: 44px;
+}
+.card__title .num {
+  font-family: var(--font-sans); font-size: 11px; font-weight: 600;
+  letter-spacing: .2em; color: var(--accent); opacity: .85;
+}
+.card__text { color: var(--muted); max-width: 60ch; }
+
+/* 技能标签 */
+.tags { list-style: none; display: flex; flex-wrap: wrap; gap: 10px; }
+.tag {
+  position: relative; overflow: hidden;
+  display: inline-block;
+  padding: 8px 16px; border-radius: 10px;
+  border: 1px solid rgba(30,136,229,.18);
+  background: rgba(255,255,255,.55);
+  font-size: 13px; letter-spacing: .02em; color: var(--text);
+  text-decoration: none;
+  transition: background .25s ease, transform .25s ease,
+              border-color .25s ease, color .25s ease, box-shadow .25s ease;
+}
+.tag:hover {
+  background: var(--accent); border-color: var(--accent); color: #fff;
+  transform: translateY(-2px); box-shadow: 0 12px 22px -14px rgba(30,136,229,1);
+}
+
+/* 学习笔记 / 作品 */
+.projects__grid { display: flex; flex-direction: column; gap: 14px; }
+.project {
+  position: relative; overflow: hidden;
+  display: grid; grid-template-columns: 44px 1fr; column-gap: 16px;
+  align-items: start;
+  padding: 22px 24px; border-radius: 18px;
+  background: rgba(255,255,255,.5);
+  border: 1px solid var(--border);
+  text-decoration: none; color: inherit;
+  transition: transform .3s ease, border-color .3s ease,
+              background .3s ease, box-shadow .3s ease;
+}
+.project:hover {
+  transform: translateX(4px); background: #fff;
+  border-color: rgba(30,136,229,.32);
+  box-shadow: 0 22px 40px -28px rgba(13,47,71,.75);
+}
+.project__index {
+  grid-row: span 2;
+  font-family: var(--font-sans); font-size: 12px; font-weight: 600;
+  letter-spacing: .18em; color: var(--accent);
+  padding-top: 4px; padding-left: 10px;
+  border-left: 1px solid rgba(30,136,229,.35);
+  align-self: stretch;
+  display: flex; align-items: flex-start;
+}
+.project__name { font-size: 16px; font-family: var(--font-serif); line-height: 1.5; }
+.project__desc { font-size: 13.5px; color: var(--muted); margin-top: 4px; }
+
+/* 找到我 */
+.links { list-style: none; display: flex; flex-direction: column; }
+.links li + li { border-top: 1px solid rgba(18,96,148,.08); }
+.links a {
+  position: relative; overflow: hidden;
+  display: flex; align-items: center; gap: 16px;
+  padding: 14px 10px; border-radius: 12px;
+  text-decoration: none;
+  transition: background .25s ease, transform .25s ease;
+}
+.links a:hover { background: rgba(30,136,229,.06); transform: translateX(3px); }
+.links__label {
+  font-size: 11px; letter-spacing: .18em; text-transform: uppercase;
+  color: var(--muted); min-width: 68px;
+}
+.links__value { font-size: 14.5px; color: var(--text); }
+.links__arrow {
+  margin-left: auto; color: var(--accent); font-size: 13px; opacity: .45;
+  transition: opacity .25s ease, transform .25s ease;
+}
+.links a:hover .links__arrow { opacity: 1; transform: translate(1px, -1px); }
+
+/* 页脚 */
+.footer {
+  position: relative; z-index: 2;
+  width: min(760px, 100%);
+  margin: 52px auto 0;
+  text-align: center; color: var(--muted);
+  font-size: 12px; letter-spacing: .08em;
+}
+
+@media (max-width: 620px) {
+  body { padding: 62px 16px 88px; }
+  .stack { gap: 26px; }
+  .card { padding: 30px 22px; }
+  .hero { padding: 38px 22px 32px; }
+  .avatar { width: 78px; height: 78px; font-size: 28px; }
+  .project { grid-template-columns: 34px 1fr; column-gap: 12px; padding: 18px 16px; }
+  .links__label { min-width: 56px; font-size: 10px; }
+}
+
+/* 入场动画 */
+.js [data-reveal] {
+  opacity: 0; transform: translateY(30px);
+  transition: opacity .8s cubic-bezier(.2,.7,.3,1), transform .8s cubic-bezier(.2,.7,.3,1);
+}
+.js [data-reveal].is-visible { opacity: 1; transform: none; }
+
+/* 点击效果 ①：描边闪动 + 轻微回弹 */
+@keyframes press-bounce {
+  0%   { transform: scale(1); }
+  30%  { transform: scale(0.982); }
+  60%  { transform: scale(1.008); }
+  100% { transform: scale(1); }
+}
+@keyframes border-flash {
+  0%   { border-color: rgba(30,136,229,.85); box-shadow: 0 0 0 2px rgba(30,136,229,.28), 0 30px 60px -30px rgba(30,136,229,.6); }
+  100% { border-color: rgba(255,255,255,.85); box-shadow: 0 2px 6px -2px rgba(13,47,71,.06), 0 30px 60px -34px rgba(13,47,71,.35); }
+}
+@keyframes ring-flash {
+  0%   { box-shadow: 0 0 0 0 rgba(30,136,229,.45); }
+  100% { box-shadow: 0 0 0 10px rgba(30,136,229,0); }
+}
+.card.is-clicked {
+  animation: press-bounce .5s cubic-bezier(.34,1.56,.64,1), border-flash .5s ease-out;
+}
+.btn.is-clicked,
+.tag.is-clicked,
+.project.is-clicked,
+.links a.is-clicked,
+.card__go.is-clicked {
+  animation: press-bounce .42s cubic-bezier(.34,1.56,.64,1), ring-flash .5s ease-out;
+}
+
+/* 点击效果 ②：一闪一闪的小星星 */
+.star {
+  position: fixed; z-index: 999; pointer-events: none;
+  clip-path: polygon(50% 0%, 61% 39%, 100% 50%, 61% 61%, 50% 100%, 39% 61%, 0% 50%, 39% 39%);
+  filter: drop-shadow(0 0 5px currentColor);
+  animation: star-fly .78s cubic-bezier(.15,.7,.3,1) forwards;
+}
+@keyframes star-fly {
+  0%   { transform: translate(-50%,-50%) scale(0) rotate(0deg); opacity: 0; }
+  18%  { transform: translate(-50%,-50%) scale(1.1) rotate(30deg); opacity: 1; }
+  36%  { opacity: .25; }
+  54%  { opacity: 1; }
+  72%  { opacity: .35; }
+  100% {
+    transform: translate(calc(-50% + var(--dx)), calc(-50% + var(--dy))) scale(var(--sc)) rotate(140deg);
+    opacity: 0;
+  }
+}
+
+/* 背景里缓慢闪烁的星点 */
+.sky-star {
+  position: fixed; z-index: 1; border-radius: 50%;
+  background: #fff; pointer-events: none;
+  animation: sky-twinkle 4s ease-in-out infinite;
+  box-shadow: 0 0 10px 2px rgba(255,255,255,.95);
+}
+@keyframes sky-twinkle {
+  0%, 100% { opacity: 0; transform: scale(.6); }
+  50%      { opacity: .9; transform: scale(1); }
+}
+
+@media (hover: none) {
+  .card:hover { transform: none; }
+  .project:hover { transform: none; }
+  .tag:hover { transform: none; }
+  .links a:hover { transform: none; }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  html { scroll-behavior: auto; }
+  * { transition: none !important; animation: none !important; }
+  .js [data-reveal] { opacity: 1; transform: none; }
+  .star, .sky-star { display: none; }
+}
+</style>
+</head>
+
+<body>
+  <div class="progress"><i class="progress__bar"></i></div>
+
+  <main class="stack">
+
+    <!-- 1. 头图 -->
+    <section class="card hero" data-reveal>
+      <a class="card__go" href="https://blog.csdn.net/lili_211" target="_blank" rel="noreferrer" aria-label="前往我的 CSDN 主页">↗</a>
+      <p class="hero__eyebrow">Personal Portfolio · 2026</p>
+      <div class="avatar">吕</div>
+      <h1 class="hero__name">吕晴</h1>
+      <p class="hero__role">Python 学习者 · 前端入门中</p>
+      <p class="hero__tagline">一边踩坑，一边成长 —— 把每周学到的东西记下来。</p>
+      <div class="hero__actions">
+        <a href="#notes" class="btn btn--primary">看看我的笔记</a>
+        <a href="https://blog.csdn.net/lili_211" target="_blank" rel="noreferrer" class="btn btn--ghost">去 CSDN 主页</a>
+      </div>
+    </section>
+
+    <!-- 2. 关于我 -->
+    <section class="card about" id="about" data-reveal>
+      <a class="card__go" href="https://blog.csdn.net/lili_211" target="_blank" rel="noreferrer" aria-label="前往我的 CSDN 主页">↗</a>
+      <h2 class="card__title"><span class="num">01</span>关于我</h2>
+      <p class="card__text">
+        你好，我是吕晴，CSDN 账号是 lili_211，一个正在起步的编程学习者。
+        目前在学 Python（才第二周），同时也在入门前端 HTML / CSS。
+        习惯把每周的收获和踩过的坑写成笔记发在 CSDN，
+        相信「先把基础打扎实，再慢慢提升」。
+      </p>
+    </section>
+
+    <!-- 3. 技能 & 标签 -->
+    <section class="card skills" id="skills" data-reveal>
+      <a class="card__go" href="https://blog.csdn.net/lili_211" target="_blank" rel="noreferrer" aria-label="前往我的 CSDN 主页">↗</a>
+      <h2 class="card__title"><span class="num">02</span>技能 &amp; 标签</h2>
+      <ul class="tags">
+        <li><a class="tag" href="https://so.csdn.net/so/search?q=Python" target="_blank" rel="noreferrer">Python</a></li>
+        <li><a class="tag" href="https://so.csdn.net/so/search?q=HTML" target="_blank" rel="noreferrer">HTML</a></li>
+        <li><a class="tag" href="https://so.csdn.net/so/search?q=CSS" target="_blank" rel="noreferrer">CSS</a></li>
+        <li><a class="tag" href="https://so.csdn.net/so/search?q=Python%E5%9F%BA%E7%A1%80%E8%AF%AD%E6%B3%95" target="_blank" rel="noreferrer">基础语法</a></li>
+        <li><a class="tag" href="https://so.csdn.net/so/search?q=Python%E5%BE%AA%E7%8E%AF" target="_blank" rel="noreferrer">循环与判断</a></li>
+        <li><a class="tag" href="https://so.csdn.net/so/search?q=Python%E5%88%97%E8%A1%A8" target="_blank" rel="noreferrer">列表 / 字典</a></li>
+        <li><a class="tag" href="https://blog.csdn.net/lili_211" target="_blank" rel="noreferrer">学习笔记</a></li>
+      </ul>
+    </section>
+
+    <!-- 4. 学习笔记 / 作品 -->
+    <section class="card projects" id="notes" data-reveal>
+      <a class="card__go" href="https://blog.csdn.net/lili_211" target="_blank" rel="noreferrer" aria-label="前往我的 CSDN 主页">↗</a>
+      <h2 class="card__title"><span class="num">03</span>学习笔记 / 作品</h2>
+      <div class="projects__grid">
+        <a class="project" href="https://blog.csdn.net/lili_211/article/details/165217520" target="_blank" rel="noreferrer">
+          <span class="project__index">01</span>
+          <h3 class="project__name">初次接触 Python，学会了哪些技能</h3>
+          <p class="project__desc">输入输出、if 判断、循环、注释…… 记下入门第一周踩的坑。</p>
+        </a>
+        <a class="project" href="https://blog.csdn.net/lili_211/article/details/165884172" target="_blank" rel="noreferrer">
+          <span class="project__index">02</span>
+          <h3 class="project__name">学习 Python 第二周总结</h3>
+          <p class="project__desc">字符串、for 循环、列表、字典 —— 这一周的复盘与改进计划。</p>
+        </a>
+        <a class="project" href="个人主页.html">
+          <span class="project__index">03</span>
+          <h3 class="project__name">这个个人主页</h3>
+          <p class="project__desc">用 HTML + CSS + 一点 JavaScript 亲手写的第一个网站。</p>
+        </a>
+      </div>
+    </section>
+
+    <!-- 5. 找到我 -->
+    <section class="card contact" id="contact" data-reveal>
+      <a class="card__go" href="mailto:3572084862@qq.com" aria-label="发邮件给我">↗</a>
+      <h2 class="card__title"><span class="num">04</span>找到我</h2>
+      <ul class="links">
+        <li>
+          <a href="https://blog.csdn.net/lili_211" target="_blank" rel="noreferrer">
+            <span class="links__label">CSDN</span>
+            <span class="links__value">lili_211</span>
+            <span class="links__arrow">↗</span>
+          </a>
+        </li>
+        <li>
+          <a href="mailto:3572084862@qq.com">
+            <span class="links__label">Email</span>
+            <span class="links__value">3572084862@qq.com</span>
+            <span class="links__arrow">↗</span>
+          </a>
+        </li>
+      </ul>
+    </section>
+
+  </main>
+
+  <footer class="footer">© 2026 吕晴 · 用 ❤️ 和代码手写</footer>
+
+<script>
+document.documentElement.classList.add('js');
+
+/* 1. 滚动淡入 */
+const revealItems = document.querySelectorAll('[data-reveal]');
+const observer = new IntersectionObserver((entries) => {
+  entries.forEach((entry) => {
+    if (entry.isIntersecting) {
+      entry.target.classList.add('is-visible');
+      observer.unobserve(entry.target);
+    }
+  });
+}, { threshold: 0.12, rootMargin: '0px 0px -50px 0px' });
+revealItems.forEach((item) => observer.observe(item));
+
+/* 1-2. 顶部滚动进度条 */
+const progressBar = document.querySelector('.progress__bar');
+function updateProgress() {
+  const scrollable = document.documentElement.scrollHeight - window.innerHeight;
+  const ratio = scrollable > 0 ? window.scrollY / scrollable : 0;
+  progressBar.style.transform = 'scaleX(' + Math.min(ratio, 1) + ')';
+}
+window.addEventListener('scroll', updateProgress, { passive: true });
+window.addEventListener('resize', updateProgress);
+updateProgress();
+
+/* 2. 根据时间段问好 */
+const hour = new Date().getHours();
+let greeting = '你好';
+if (hour < 6)       greeting = '凌晨好';
+else if (hour < 11) greeting = '早上好';
+else if (hour < 14) greeting = '中午好';
+else if (hour < 18) greeting = '下午好';
+else                greeting = '晚上好';
+
+const roleEl = document.querySelector('.hero__role');
+if (roleEl) roleEl.textContent = greeting + '，Python 学习者 · 前端入门中';
+
+/* 3. 点击效果 */
+const CLICKABLE = '.card, .card__go, .btn, .tag, .project, .links a';
+
+document.addEventListener('click', (event) => {
+  if (!(event.target instanceof Element)) return;
+
+  const target = event.target.closest(CLICKABLE);
+  if (!target) return;
+
+  playFlash(target);
+  spawnStars(event.clientX, event.clientY);
+
+  const go = event.target.closest('.card__go');
+  if (go) {
+    event.preventDefault();
+    goTo(go.getAttribute('href'), go.getAttribute('target'));
+  }
+});
+
+function playFlash(el) {
+  el.classList.remove('is-clicked');
+  void el.offsetWidth;
+  el.classList.add('is-clicked');
+  el.addEventListener('animationend', () => {
+    el.classList.remove('is-clicked');
+  }, { once: true });
+}
+
+function spawnStars(x, y) {
+  const palette = ['#1e88e5', '#52acf0', '#f6b93b'];
+  const count = 10;
+
+  for (let i = 0; i < count; i++) {
+    const star = document.createElement('span');
+    star.className = 'star';
+
+    const size     = 9 + Math.random() * 9;
+    const angle    = Math.random() * Math.PI * 2;
+    const distance = 30 + Math.random() * 50;
+    const peak     = 0.75 + Math.random() * 0.5;
+    const color    = palette[Math.floor(Math.random() * palette.length)];
+
+    star.style.left = x + 'px';
+    star.style.top  = y + 'px';
+    star.style.width  = size + 'px';
+    star.style.height = size + 'px';
+    star.style.background = color;
+    star.style.color = color;
+    star.style.setProperty('--dx', Math.cos(angle) * distance + 'px');
+    star.style.setProperty('--dy', Math.sin(angle) * distance + 'px');
+    star.style.setProperty('--sc', peak.toFixed(2));
+    star.style.animationDelay = (Math.random() * 0.08) + 's';
+
+    document.body.appendChild(star);
+    star.addEventListener('animationend', () => star.remove(), { once: true });
+  }
+}
+
+function goTo(href, targetAttr) {
+  if (!href) return;
+  setTimeout(() => {
+    if (targetAttr === '_blank') {
+      window.open(href, '_blank', 'noopener');
+    } else {
+      window.location.href = href;
+    }
+  }, 220);
+}
+
+/* 4. 背景里缓慢闪烁的星星 */
+for (let i = 0; i < 16; i++) {
+  const dot = document.createElement('span');
+  dot.className = 'sky-star';
+  const size = 2 + Math.random() * 3;
+  dot.style.width  = size + 'px';
+  dot.style.height = size + 'px';
+  dot.style.left   = Math.random() * 100 + 'vw';
+  dot.style.top    = Math.random() * 65 + 'vh';
+  dot.style.animationDelay    = (Math.random() * 5).toFixed(2) + 's';
+  dot.style.animationDuration = (3.5 + Math.random() * 4).toFixed(2) + 's';
+  dot.style.opacity = 0;
+  document.body.appendChild(dot);
+}
+</script>
+</body>
+</html>
